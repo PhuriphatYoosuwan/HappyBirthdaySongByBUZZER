@@ -1,0 +1,78 @@
+#include <Arduino.h>
+
+#define BUZZER 27
+#define BUTTON 26 
+
+#define C4 261
+#define D4 293
+#define E4 329
+#define F4 349
+#define G4 392
+#define A4 440
+#define B4 493
+#define C5 523
+#define D5 587
+#define E5 659
+#define G5 784
+#define F5 698
+
+int speedLevels[5] = {50, 75, 100, 150, 200};
+int speedIndex = 2;
+unsigned long lastButtonPress = 0;
+const int debounceDelay = 300;
+
+void playNote(int note, int duration) {
+    int adjustedDuration = duration * speedLevels[speedIndex] / 100;
+    tone(BUZZER, note, adjustedDuration);
+    delay(adjustedDuration * 1.3);
+    noTone(BUZZER);
+}
+
+void checkButton() {
+    if (digitalRead(BUTTON) == LOW) {
+        speedIndex = (speedIndex + 1) % 5;
+        Serial.print("Speed level: ");
+        Serial.println(speedLevels[speedIndex]);
+    }
+}
+
+void setup() {
+    pinMode(BUZZER, OUTPUT);
+    pinMode(BUTTON, INPUT_PULLUP);
+    Serial.begin(115200);
+}
+
+void loop() {
+    checkButton();
+    
+    playNote(G4, speedLevels[speedIndex]);
+    playNote(G4, speedLevels[speedIndex]);
+    playNote(A4, speedLevels[speedIndex] * 2);
+    playNote(G4, speedLevels[speedIndex] * 2);
+    playNote(C5, speedLevels[speedIndex] * 2);
+    playNote(B4, speedLevels[speedIndex] * 4);
+    
+    playNote(G4, speedLevels[speedIndex]);
+    playNote(G4, speedLevels[speedIndex]);
+    playNote(A4, speedLevels[speedIndex] * 2);
+    playNote(G4, speedLevels[speedIndex] * 2);
+    playNote(D5, speedLevels[speedIndex] * 2);
+    playNote(C5, speedLevels[speedIndex] * 4);
+    
+    playNote(G4, speedLevels[speedIndex]);
+    playNote(G4, speedLevels[speedIndex]);
+    playNote(G5, speedLevels[speedIndex] * 2);
+    playNote(E5, speedLevels[speedIndex] * 2);
+    playNote(C5, speedLevels[speedIndex] * 2);
+    playNote(B4, speedLevels[speedIndex] * 2);
+    playNote(A4, speedLevels[speedIndex] * 2);
+    
+    playNote(F5, speedLevels[speedIndex]);
+    playNote(F5, speedLevels[speedIndex]);
+    playNote(E5, speedLevels[speedIndex] * 2);
+    playNote(C5, speedLevels[speedIndex] * 2);
+    playNote(D5, speedLevels[speedIndex] * 2);
+    playNote(C5, speedLevels[speedIndex] * 4);
+    
+    delay(speedLevels[speedIndex] * 4);
+}
